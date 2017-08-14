@@ -3,62 +3,8 @@ var socketio = require('socket.io');
 var io;
 var guestNumber = 1;
 var nickNames = {};
-var namesUsed = {};
+var namesUsed = [];
 var currentRoom = {};
-
-var socket = io.connect();
-$(document).read(function(){
-	var chatApp = new Chat(socket);
-
-	socket.on('nameResult',function(result){
-		var message;
-
-		if(result.success){
-			message = 'You are now known as' result.name + '.';
-		}else{
-			message = result.message;
-		}
-		$('#messages').append(divSystemContentElement(message));
-	});
-
-	socket.on('joinResult',function(result){
-		$('#room').text(resut.room);
-		$('#messages').append(divSystemContentElement('Room changed.'));
-	});
-
-	socket.on('message',function(message){
-		var newElement = $('<div></div').text(message.text);
-		$('#messages').append(newElement);
-	});
-
-	socket.on('rooms', function(rooms){
-		$('#room-ist').empty();
-
-		for(var room in rooms){
-			room = room.substring(1,room.length);
-			if(room != ''){
-				$('#room-list').append(divEscapedContentElement(room));
-			}
-		}
-
-		$('#room-list div').click(function(){
-			chatApp.processCommand('/join' + $(this).text());
-			$("#send-message").focus();			
-		});
-	});
-
-	setInterval(function(){
-		socket.emit('rooms');
-	},1000);
-
-	$('#send-message').focus();
-
-	$('#send-from').submit(function(){
-		processUserInput(chatApp,socket);
-		return false;
-	});
-
-});
 
 exports.listen = function(server){
 	io = socketio.listen(server);
@@ -74,7 +20,7 @@ exports.listen = function(server){
 		handeRoomJoining(socket);
 
 		socket.on('rooms',function(){
-			socket.emit('rooms',io.sockets.manager.rooms);
+			socket.emit('rooms',io.sockets.adapter.rooms);
 		});
 
 		handeCientDisconnection(socket,nickNames,namesUsed);
@@ -100,11 +46,11 @@ function joinRoom(socket,room){
 		text:nickNames[socket.io]+'has joined' + room + '.'
 	});
 
-	var usersInRoom = io.sockets.cients(room);
+	var usersInRoom = io.sockets.adapter.rooms[room];
 	if(usersInRoom.length >1){
 		var usersInRoomSummary = 'Users currently in' + room + ':';
-		var(var index in usersInRoom){
-			var userSocketId = usersImRoom[index].id;
+		for(var index in usersInRoom){
+			var userSocketId = usersInRoom[index].id;
 			if(userSocketId != socket.id){
 				if(index>0){
 					usersInRoomSummary += ', ';
@@ -155,16 +101,16 @@ function handleMessageBoardcasting(socket){
 				text:nickNames[socket.id]+':'+message.text
 			});
 		});
-	}
+};
 
-	function handeRoomJoining(socket){
-		socket.on('join',functionn(room){
+function handeRoomJoining(socket){
+		socket.on('join',function(room){
 			socket.leave(currentRoom[socket.id]);
 			joinRoom(socket,room.newRoom);
 		});
-	}
+};
 
-	function handeCientDisconnection(socket){
+function handeCientDisconnection(socket){
 		socket.on('disconnect',function(){
 			var nameIndex = namesUsed.indexOf(nickNames[socket.id]);
 			delete namesUsed[nameIndex];
@@ -173,4 +119,3 @@ function handleMessageBoardcasting(socket){
 };
 
 
-}

@@ -14,7 +14,7 @@ $(document).ready(function(){
 	});
 
 	socket.on('joinResult',function(result){
-		$('#room').text(resut.room);
+		$('#room').text(result.room);
 		$('#messages').append(divSystemContentElement('Room changed.'));
 	});
 
@@ -73,7 +73,7 @@ Chat.prototype.changeRoom = function(room){
 Chat.prototype.processCommand = function(command){
 	var words = command.split('');
 
-	var command = words[0].substring(1,word[0].length).toLowerCase();
+	var command = words[0].substring(1,words[0].length).toLowerCase();
 
 	var message =false;
 
