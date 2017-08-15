@@ -20,7 +20,8 @@ exports.listen = function(server){
 		handeRoomJoining(socket);
 
 		socket.on('rooms',function(){
-			socket.emit('rooms',io.sockets.adapter.rooms);
+			console.log("------------",io.sockets.adapter.clientRooms(socket),"+++++++++++++++++++++++");
+			socket.emit('rooms',io.sockets.adapter.clientRooms(socket));
 		});
 
 		handeCientDisconnection(socket,nickNames,namesUsed);

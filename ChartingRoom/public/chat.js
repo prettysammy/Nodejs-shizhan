@@ -14,7 +14,7 @@ $(document).ready(function(){
 	});
 
 	socket.on('joinResult',function(result){
-		$('#room').text(result.room);
+		$('#room').text(resut.room);
 		$('#messages').append(divSystemContentElement('Room changed.'));
 	});
 
@@ -24,7 +24,7 @@ $(document).ready(function(){
 	});
 
 	socket.on('rooms', function(rooms){
-		$('#room-ist').empty();
+		$('#room-list').empty();
 
 		for(var room in rooms){
 			room = room.substring(0,4);
@@ -71,7 +71,7 @@ Chat.prototype.changeRoom = function(room){
 };
 
 Chat.prototype.processCommand = function(command){
-	var words = command.split('');
+	var words = command.split(' ');
 
 	var command = words[0].substring(1,words[0].length).toLowerCase();
 
@@ -80,13 +80,13 @@ Chat.prototype.processCommand = function(command){
 	switch(command){
 		case 'join':
 			words.shift();
-			var room = words.join('');
+			var room = words.join(' ');
 			this.changeRoom(room);
 			break;
 
 		case 'nick':
 			words.shift();
-			var name = words.join('');
+			var name = words.join(' ');
 			this.socket.emit('nameAttempt',name);
 			break;
 

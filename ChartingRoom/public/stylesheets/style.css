@@ -14,11 +14,11 @@ a {
 }
 
 #room{
-	background: #ddd;
+	background-color: #ddd;
 	margin-bottom: 1em;
 }
 
-#message{
+#messages{
 	width:690px;
 	height:300px;
 	overflow:auto;
@@ -27,7 +27,7 @@ a {
 	margin-right: 10px;
 }
 
-#room-ist{
+#room-list{
 	float:right;
 	width:100px;
 	height:300px;
@@ -35,7 +35,7 @@ a {
 }
 
 #room-list div{
-	border-bottom:1px sollid #eee;
+	border-bottom:1px solid #eee;
 }
 
 #room-list div:hover{
