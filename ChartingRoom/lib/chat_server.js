@@ -20,8 +20,8 @@ exports.listen = function(server){
 		handeRoomJoining(socket);
 
 		socket.on('rooms',function(){
-			console.log("------------",io.sockets.adapter.clientRooms(socket),"+++++++++++++++++++++++");
-			socket.emit('rooms',io.sockets.adapter.clientRooms(socket));
+			//console.log("------------",io.sockets.manager.rooms,"+++++++++++++++++++++++");
+			socket.emit('rooms',io.sockets.manager.rooms);
 		});
 
 		handeCientDisconnection(socket,nickNames,namesUsed);
@@ -31,7 +31,7 @@ exports.listen = function(server){
 function assignGuestName(socket,guestNumber,nickNames,namesUsed){
 	var name = 'Guest' + guestNumber;
 	nickNames[socket.id]=name;
-	socket.emit('nameResut',{
+	socket.emit('nameResult',{
 		success:true,
 		name:name
 	});
@@ -41,15 +41,15 @@ function assignGuestName(socket,guestNumber,nickNames,namesUsed){
 
 function joinRoom(socket,room){
 	socket.join(room);
-	currentRoom[socket.io] = room;
+	currentRoom[socket.id] = room;
 	socket.emit('joinResult',{room:room});
 	socket.broadcast.to(room).emit('message',{
-		text:nickNames[socket.io]+'has joined' + room + '.'
+		text:nickNames[socket.id]+' has joined ' + room + '.'
 	});
 
-	var usersInRoom = io.sockets.adapter.rooms[room];
+	var usersInRoom = io.sockets.clients(room);
 	if(usersInRoom.length >1){
-		var usersInRoomSummary = 'Users currently in' + room + ':';
+		var usersInRoomSummary = 'Users currently in ' + room + ':';
 		for(var index in usersInRoom){
 			var userSocketId = usersInRoom[index].id;
 			if(userSocketId != socket.id){
@@ -84,7 +84,7 @@ function handleNameChangeAttempts(socket,nickNames,namesUsed){
 						name:name
 					});
 					socket.broadcast.to(currentRoom[socket.id]).emit('message',{
-						text:previousName + 'is now known as' + name + '.'
+						text:previousName + 'is now known as ' + name + '.'
 					})
 				} else{
 					socket.emit('nameResut',{
